@@ -2,8 +2,11 @@ import pika
 import time
 import random
 import json
+import os
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
+print os.environ['HOST_RABBITMQ']
+host = os.environ['HOST_RABBITMQ']
+connection = 'pika.BlockingConnection(pika.ConnectionParameters(host=%s))'%(host)
 channel = connection.channel()
 channel.queue_declare(queue='hello')
 
