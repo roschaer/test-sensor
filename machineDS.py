@@ -30,11 +30,19 @@ import time
 import os
 import pika
 
+#
+# Lets create some unique ID's for the sensor
+#
+
 def uniqueid():
     seed = random.getrandbits(32)
     while True:
        yield seed
        seed += 1
+
+#
+# With a little helper from my friends to write values in the json struct
+#
 
 def valStruct(val, type="temperatur", unit="C", description=""):
     return { "value": val, "type": type, "unit":unit, "description":description}
@@ -45,18 +53,8 @@ try:
     supply = []
     unique_sequence = uniqueid()
 
-    host = os.environ.get('HOST_RABBITMQ')
-    max_machine = os.environ.get('SENSOR')
-    print os.environ.get('HOME')
-    print host
-    print max_machine
-
-    if host == None:
-        host = "192.168.99.100"
-    if max_machine == None:
-        max_machine = 3
-    else:
-        max_machine = int(max_machine)
+    host = os.environ.get('HOST_RABBITMQ',"192.168.99.100")
+    max_machine = int(os.environ.get('SENSOR', '3'))
 
     print "################################"
     print "# Starting IoT Sensor Simulator "
@@ -64,7 +62,7 @@ try:
     print "# Sensor: %i" % (max_machine)
     print "################################"
 
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host="192.168.99.100"))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host=host))
     channel = connection.channel()
     channel.queue_declare(queue='HackZurich16')
 
